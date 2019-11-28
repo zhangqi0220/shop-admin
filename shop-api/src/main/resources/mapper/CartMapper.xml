@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  
+    "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+   
+<mapper namespace="com.fh.shopcart.mapper.CartMapper">
+    <select id="queryListById" resultType="com.fh.product.model.Product" parameterType="int">
+        SELECT
+        t_product.id,
+        t_product.`name`,
+        t_product.price,
+        t_product.createDate,
+        t_product.brandId,
+        t_product.filePath,
+        t_product.category1,
+        t_product.category2,
+        t_product.category3,
+        t_product.`status`,
+        t_brand.id,
+        t_brand.brandName
+        FROM
+        t_product ,
+        t_brand
+        WHERE
+        t_product.id = #{id} AND
+        t_product.brandId = t_brand.id
+	</select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  
+    "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+   
+<mapper namespace="com.fh.order.mapper.OrderMapper">
+    <select id="queryListById" resultType="com.fh.product.model.Product" parameterType="int">
+        SELECT
+        t_product.id,
+        t_product.`name`,
+        t_product.price,
+        t_product.createDate,
+        t_product.brandId,
+        t_product.filePath,
+        t_product.category1,
+        t_product.category2,
+        t_product.category3,
+        t_product.`status`,
+        t_product.reserve
+        FROM
+        t_product
+        WHERE
+        t_product.id = #{id}
+	</select>
+    <update id="updateProductByReserve">
+        update t_product set reserve = reserve - #{count} where id=#{productId} and reserve - #{count} > 0
+    </update>
+    <insert id="addOederInfo" parameterType="com.fh.order.model.OrderInfo">
+        insert into t_orderinfo (orderId,productId,productName,photoPath,count,countPrice,price)
+        values (#{orderId},#{productId},#{productName},#{photoPath},#{count},#{countPrice},#{price});
+    </insert>
+
+    <insert id="addOrder" parameterType="com.fh.order.model.Order">
+        insert into t_order  values (#{orderId},#{userId},#{totalPrice},#{totalCount},#{payType},#{status},#{consignee},#{createDate});
+    </insert>
+
+    <update id="updateIsDefaultArea" parameterType="int">
+        update t_order_area set defaultArea = #{defaultArea}
+    </update>
+    <update id="updateOrderStatus">
+        update t_order set status = #{paySuccess} where  orderId = #{orderId}
+    </update>
+</mapper>

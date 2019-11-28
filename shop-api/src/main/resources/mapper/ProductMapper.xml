@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fh.product.mapper.ProductMapper">
+    <resultMap id="mm" type="map">
+        <result property="id" column="id"/>
+        <result property="name" column="brandName"></result>
+    </resultMap>
+    <sql id="sql_where">
+        <where>
+            <if test="productName !=null and productName !=''">
+                p.name like concat("%",#{productName},"%")
+            </if>
+            <if test="brandId !=null and brandId !=-1">
+                and p.brandId =#{brandId}
+            </if>
+            <if test="minPrice !=null ">
+                and p.price >=#{minPrice}
+            </if>
+            <if test="maxPrice !=null ">
+                and p.price &lt;=#{maxPrice}
+            </if>
+            <if test="minDate !=null">
+                and p.createDate >=#{minDate}
+
+            </if>
+            <if test="maxDate !=null">
+                and p.createDate &lt;=#{maxDate}
+
+            </if>
+
+
+        </where>
+
+    </sql>
+    <select id="queryList" resultType="product" parameterType="com.fh.param.ProductSearchParam">
+		SELECT
+        t_product.id as id,
+        t_brand.brandName as brandName,
+        t_product.`name` as name,
+        t_product.price as price,
+        t_product.createDate as createDate,
+        t_product.brandId as brandId,
+        t_product.filePath as filePath,
+        t_product.`status` as status
+        FROM
+        t_brand ,
+        t_product
+        WHERE
+        t_product.brandId = t_brand.id AND
+        t_product.`status` = 1
+	</select>
+
+    <select id="getBrandList" resultType="com.fh.product.model.Brand">
+		select * from t_brand
+	</select>
+
+
+    <select id="queryMapList" parameterType="com.fh.param.ProductSearchParam" resultMap="rm">
+        select p.*,b.brandName 'aaa', CONCAT(ifnull(c1.categoryName,""),if(c2.categoryName is
+        null,'','-->'),ifnull(c2.categoryName,""),if(c3.categoryName is null,'','-->'),ifnull(c3.categoryName,""))
+        category from t_product p LEFT join t_brand b on p.brandId = b.id
+        LEFT JOIN t_category c1 on p.category1=c1.id
+        LEFT JOIN t_category c2 on p.category2=c2.id
+        LEFT JOIN t_category c3 on p.category3=c3.id
+        <include refid="sql_where"></include>
+        order by p.id desc
+        limit #{start},#{length}
+
+    </select>
+    <resultMap id="rm" type="java.util.Map">
+        <result column="id" property="id"></result>
+        <result column="name" property="name"></result>
+        <result column="price" property="price"></result>
+        <result column="createDate" property="createDate"></result>
+        <result column="aaa" property="brandName"></result>
+        <result column="category" property="category"></result>
+        <result column="status" property="status"></result>
+    </resultMap>
+    <!--查询热销的商品-->
+    <select id="queryHotProductList" resultType="java.util.Map">
+		SELECT
+		t_orderinfo.productId,
+		t_orderinfo.productName,
+		t_orderinfo.price,
+		t_orderinfo.countPrice,
+		t_orderinfo.count,
+		t_orderinfo.photoPath,
+		t_pay_log.createDate,
+		Count(t_orderinfo.productId) AS hot,
+		t_brand.brandName
+		FROM
+		t_pay_log ,
+        t_orderinfo ,
+        t_brand ,
+        t_product
+		WHERE
+		t_pay_log.orderId = t_orderinfo.orderId AND
+		t_orderinfo.productId = t_product.id AND
+        t_product.brandId = t_brand.id  AND
+		t_pay_log.createDate > DATE_SUB(CURDATE(), INTERVAL #{num} ${timeName})
+		GROUP BY
+		t_orderinfo.productId
+		ORDER BY
+		hot DESC
+		limit 0,5
+	</select>
+    <!--查询热销的品牌-->
+    <select id="queryHotBrandList" resultType="java.util.Map">
+                SELECT
+                t_brand.id,
+                t_brand.brandName,
+                Count(t_brand.id)AS hot
+        FROM
+                                    t_pay_log ,
+                                    t_orderinfo ,
+                                    t_product ,
+                                    t_brand
+        WHERE
+        t_pay_log.orderId = t_orderinfo.orderId AND
+        t_orderinfo.productId = t_product.id AND
+        t_product.brandId = t_brand.id AND
+        t_pay_log.createDate > DATE_SUB(CURDATE(), INTERVAL #{num} ${timeName})
+        GROUP BY
+        t_brand.id
+        HAVING
+        hot > 0
+        ORDER BY
+        hot DESC
+        LIMIT 0,8
+    </select>
+    <!--根据品牌查询商品-->
+    <select id="queryHotBrandListByBrandId" parameterType="int" resultType="product">
+        SELECT
+        t_product.id as id,
+        t_brand.brandName as brandName,
+        t_product.`name` as name,
+        t_product.price as price,
+        t_product.createDate as createDate,
+        t_product.brandId as brandId,
+        t_product.filePath as filePath,
+        t_product.`status` as status
+        FROM
+        t_brand ,
+        t_product
+        WHERE
+        t_brand.id = t_product.brandId AND
+        t_brand.id = #{brandId}
+    </select>
+</mapper>

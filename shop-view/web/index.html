@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商城首页</title>
+</head>
+<link rel="stylesheet" href="js/photoView/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="js/static/css/style.css"/>
+<link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="js/photoView/css/demo.css">
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/bootstrap/js/bootstrap.min.js"></script>
+<script src="js/overall.js"></script>
+
+<body>
+<div id="navDiv">
+
+</div>
+
+
+<div class="header" style="margin-top: 70px">
+    <div class="menu-bar">
+        <div class="view">
+            <div class="category">
+                <h2>商品分类</h2>
+                <ul class="category-option" id="category-option">
+                </ul>
+            </div>
+            <ul class="navigator">
+                <li class="current">
+                    <a href="#">首页</a>
+                </li>
+                <li>
+                    <a href="#">家具城</a>
+                </li>
+                <li>
+                    <a href="#">建材城</a>
+                </li>
+                <li>
+                    <a href="#">家居家饰</a>
+                </li>
+                <li>
+                    <a href="#">团购</a>
+                </li>
+                <li>
+                    <a href="#">体验馆</a>
+                </li>
+                <li>
+                    <a href="#">阅木</a>
+                </li>
+                <li>
+                    <a href="#">晒家</a>
+                </li>
+                <li>
+                    <a href="#">图览家居</a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div><!--分类列表-->
+<!--轮播-->
+<div class="scroll-banner" style="background:#227465">
+    <ul class="scroll-content">
+        <li class="scroll-item" style="background:#227465;display: block;">
+            <div class="scroll-index">
+                <a href="#">
+                    <img class="sc-big fadeInR" src="js/static/images/banner01.jpg">
+                </a>
+                <div class="banner_r">
+                    <a href="#">
+                        <img src="js/static/images/banner_r01.png"/>
+                    </a>
+                    <a href="#">
+                        <img src="js/static/images/banner_r02.png"/>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="scroll-item" style="background:#eef3f5">
+            <div class="scroll-index">
+                <a href="#">
+                    <img class="sc-big fadeInR" src="js/static/images/banner02.jpg">
+                </a>
+                <div class="banner_r">
+                    <a href="#">
+                        <img src="js/static/images/banner_r01.png"/>
+                    </a>
+                    <a href="#">
+                        <img src="js/static/images/banner_r02.png"/>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="scroll-item" style="background:#de3435">
+            <div class="scroll-index">
+                <a href="#">
+                    <img class="sc-big fadeInR" src="js/static/images/banner03.jpg">
+                </a>
+                <div class="banner_r">
+                    <a href="#">
+                        <img src="js/static/images/banner_r01.png"/>
+                    </a>
+                    <a href="#">
+                        <img src="js/static/images/banner_r02.png"/>
+                    </a>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="scroll-btn">
+        <span class="current"></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+<div class="container" style="width: 100%">
+    <div class="row">
+        <div class="col-md-12" >
+            <div class="panel panel-success">
+                <div class="panel-heading">商品列表</div>
+                <div class="panel-body" id="productListDiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-success">
+                <div class="panel-heading">热销商品
+                    <select class="navbar-right" onchange="queryHotProduct(this.value)">
+                        <option value="1,DAY">一天内</option>
+                        <option value="1,WEEK">一周内</option>
+                        <option value="1,MONTH" selected>一月内</option>
+                        <option value="6,MONTH">半年内</option>
+                        <option value="1,YEAR">一年内</option>
+                    </select>
+                    <font class="navbar-right">热销时间：</font>
+                </div>
+                <div class="panel-body" id="hotListDiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-success">
+                <div class="panel-heading">热销品牌
+                    <select class="navbar-right" onchange="queryHotProductList(this.value)">
+                        <option value="1,DAY">一天内</option>
+                        <option value="1,WEEK">一周内</option>
+                        <option value="1,MONTH" selected>一月内</option>
+                        <option value="6,MONTH">半年内</option>
+                        <option value="1,YEAR">一年内</option>
+                    </select>
+                    <font class="navbar-right">热销时间：</font>
+                </div>
+                <div class="panel-body" id="hotBrandListDiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div><!--商品分类-->
+
+<div id="productDiv" style="display: none;">
+    <div class="col-md-3 col-sm-6">
+        <div class="product-grid">
+            <div class="product-image" style="height: 400px">
+                <a href="javascript:;">
+                    <img class="pic-1" src="##photoPath##" style="border-radius: 10px">
+                </a>
+            </div>
+            <div class="product-content">
+                <h3 class="title"><a href="#">商品名称：##produtName##</a></h3>
+                <h4 class="title"><a href="#">商品品牌：##brandName##</a></h4>
+                <div class="price">$##price##
+                    <span>$##price##</span>
+                </div>
+            </div>
+            <ul class="social">
+                <li><a href="javascript:;" data-tip="Quick View"><i class="fa fa-search"></i></a></li>
+                <li><a href="javascript:;" data-tip="加入收藏"><i class="fa fa-shopping-bag"></i></a></li>
+                <li><a href="javascript:;" data-tip="加入购物车" onclick="buy('##productId##','1','1')"><i class="fa fa-shopping-cart"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</div><!--商品模板-->
+<div style="display: none"> <button class="but  btn-default">##brandName</button></div>
+
+</body>
+<script src="js/static/js/jquery.SuperSlide.2.1.3.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    //左侧分类导航
+    $('.category-option .cat-item').hover(function () {
+        $(this).toggleClass('hover')
+    })
+    //图片轮播
+    jQuery(".scroll-banner").slide({
+        mainCell: ".scroll-content",
+        titCell: ".scroll-btn span",
+        titOnClassName: "current",
+        effect: "fold",
+        autoPlay: true,
+        delayTime: 1000,
+        interTime: 3500
+    });
+</script>
+<script>
+    $(function () {
+        queryCategoryParent(0);
+        queryProduct();
+        queryHotProduct("1,MONTH")
+        queryHotBrandList("1,MONTH");
+    });
+
+
+    function queryProduct() {
+        $.get({
+            url: "http://localhost:8085/queryList",
+            dataType: "json",
+            success: function (data) {
+                var productList = data.data;
+                var product = $("#productDiv").html();
+                $(productList).each(function () {
+                    var producrHtml = product.replace(/##photoPath##/g, "http://192.168.216.136:8000/"+this.filePath).replace(/##produtName##/g, this.name).replace(/##price##/g, this.price).replace(/##productId##/g, this.id).replace(/##brandName##/g,this.brandName);
+                    $("#productListDiv").append(producrHtml);
+                });
+
+            }
+        })
+    };
+    function queryHotProduct(value) {
+       var hotvalue = value.split(",");
+        $("#hotListDiv").html("");
+        $.get({
+            url: "http://localhost:8085/queryHotProductList",
+            data:{"number":hotvalue[0],"timeName":hotvalue[1]},
+            dataType: "json",
+            success: function (data) {
+                var productList = data.data;
+                var product = $("#productDiv").html();
+                $(productList).each(function () {
+                    var producrHtml = product.replace(/##photoPath##/g, "http://192.168.216.136:8000/"+this.photoPath).replace(/##produtName##/g, this.productName).replace(/##price##/g, this.price).replace(/##productId##/g, this.productId).replace(/##brandName##/g,this.brandName);
+                    $("#hotListDiv").append(producrHtml);
+                });
+
+            }
+        })
+    };
+    function queryHotBrandList(value) {
+       var hotvalue = value.split(",");
+        $("#hotBrandListDiv").html("");
+        $.get({
+            url: "http://localhost:8085/queryHotBrandList",
+            data:{"number":hotvalue[0],"timeName":hotvalue[1]},
+            dataType: "json",
+            success: function (data) {
+                var productList = data.data;
+                $(productList).each(function () {
+
+                });
+
+            }
+        })
+    };
+
+    var categoryList = [];
+    var str = "";
+    function queryCategoryParent(pid) {
+        $.get({
+            url: "http://localhost:8085/category/queryList",
+            dataType: "json",
+            data: {"pid": pid},
+            success: function (data) {
+                categoryList = data.data;
+                $(categoryList).each(function () {
+                    var i = 0;
+                    i++;
+                    if (this.pid == 0) {
+                        str += "<li class=\"cat-item top-cat\">";
+                        queryChildren(this.id);
+                        str += "<i class=\"icon i" + i + "\"></i>           <!--父节点-->\n" +
+                            "<a class=\"txt\" href=\"#\">" + this.categoryName + "</a>\n" +
+                            "</li>"
+                    }
+                });
+                $("#category-option").html(str)
+
+            }
+        })
+    }
+
+    function queryChildren(pid) {
+        str += "<div class=\"sub-cat clearfix\" style='background:rgba(255,255,255, 0.9)'>\n" +
+            "<div class=\"sub-cat-links Left\">";
+        $(categoryList).each(function () {
+            if (this.pid == pid) {
+                str += "<ul class=\"sub-group clearfix\">\n" +
+                    "<li class=\"Left sub-title\">\n" +
+                    "<a href=\"#\"><i class=\"i-t\"></i>" + this.categoryName + "</a>   <!--子节点-->\n" +
+                    "</li><li class=\"Left sub-content\">";
+                querySon(this.id);
+                str += "</li>\n" +
+                    " </ul>"
+            }
+        })
+        str += "</div></div>"
+    }
+
+    function querySon(pid) {
+        $(categoryList).each(function () {
+            if (this.pid == pid) {
+                str += "<a href=\"#\">" + this.categoryName + "</a>"
+            }
+        })
+    }
+</script>
+</html>

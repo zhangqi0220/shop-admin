@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  
+    "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+   
+<mapper namespace="com.fh.mapper.RoleResourcesMapper">
+ <select id="queryRoleCount" resultType="java.lang.Integer">
+     select count(1) from t_role
+ </select>
+    <select id="queryRoleList" resultType="com.fh.model.Role" parameterType="com.fh.model.Page">
+        select t_id as id,t_roleName as roleName,t_insertDate as insertDate  from t_role limit #{start},#{length}
+    </select>
+    <select id="queryAllResource" resultType="com.fh.model.ResourceInfo">
+        SELECT
+        t_resource.t_id id,
+        t_resource.t_name resourceName,
+        t_resource.t_pid pid,
+        t_url url,
+        t_type type
+        FROM
+        t_resource
+
+    </select>
+    <select id="queryMyResource" parameterType="int" resultType="int">
+        		 SELECT
+        t_resource.t_id
+        FROM
+        t_resourceandrole ,
+        t_resource
+        WHERE
+        t_resourceandrole.resourceId = t_resource.t_id AND
+        t_resourceandrole.roleid=#{id}
+    </select>
+
+
+    <insert id="addRole" parameterType="com.fh.model.Role" >
+        insert into t_role (t_roleName) values (#{roleName})
+        <!-- 指定结果类型resultType，keyProperty是属性，自动返回到属性id中，order是次序，after是指获取id是在于插入后 -->
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="addRoleResource" parameterType="java.util.Map">
+        insert into t_resourceandrole (roleId,resourceId) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{roleId},
+            #{item}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_resourceandrole where roleId=#{id}
+    </delete>
+    <update id="updateRole" parameterType="com.fh.model.Role">
+        update t_role set t_roleName = #{roleName} where t_id = #{id}
+    </update>
+
+    <insert id="addResource" parameterType="com.fh.model.ResourceInfo">
+        insert into t_resource (t_name,t_url,t_pid,t_type) values (#{resourceName},#{url},#{pid},#{type})
+    </insert>
+    <update id="updateResource" parameterType="com.fh.model.ResourceInfo">
+        update t_resource set t_name = #{resourceName}, t_url = #{url} where t_id = #{id}
+      </update>
+
+    <delete id="deleteResource" parameterType="java.util.List">
+        delete from t_resource where t_id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <!--查询用户所拥有的的角色-->
+    <select id="queryUserRole" parameterType="int" resultType="com.fh.model.Role">
+        select t_role.t_id as id,t_role.t_roleName as roleName from
+        `shopuser-role` LEFT JOIN t_role on `shopuser-role`.roleid = t_role.t_id
+		where `shopuser-role`.userid=#{id}
+    </select>
+    <!--为用户增加权限-->
+    <insert id="addUserRole" parameterType="java.util.Map">
+        insert into shopuser-role (userId,roleId) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{userId},
+            #{item}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

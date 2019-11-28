@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  
+    "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+   
+<mapper namespace="com.fh.mapper.UserMapper">
+ <select id="getUserByName" resultType="user" parameterType="string">
+	 select * from t_shop_user where userName =#{userName}
+ </select>
+ <select id="getUserByPhoneNum" resultType="user" parameterType="string">
+	 select * from t_shop_user where phoneNum = #{phoneNum}
+ </select>
+
+    <select id="queryList" resultType="user"  parameterType="com.fh.param.UserSearchParam">
+		SELECT
+        u.id,u.userName,u.`passWord`,u.area1,u.area2,u.area3,u.realName,u.age,u.sex,u.phoneNum,u.salary,u.joinTime,
+        CONCAT(IFNULL(a1.areaName,""),IF(a2.areaName IS NULL,"","-->"),IFNULL(a2.areaName,""),IF(a3.areaName IS NULL,"","-->"),IFNULL(a3.areaName,""))areaName
+        FROM
+        t_shop_user u LEFT JOIN a_area a1 on u.area1  = a1.id
+         LEFT JOIN a_area a2 on u.area2  = a2.id
+         LEFT JOIN a_area a3 on u.area3  = a3.id
+        limit #{start},#{length}
+	</select>
+    <insert id="addUser" parameterType="user">
+        insert into t_shop_user(userName,passWord,salt,area1,area2,area3,realName,age,sex,phoneNum,salary,joinTime) values (#{userName},#{passWord},#{salt},#{area1},#{area2},#{area3},#{realName},#{age},#{sex},#{phoneNum},#{salary},#{joinTime})
+        <!-- 指定结果类型resultType，keyProperty是属性，自动返回到属性id中，order是次序，after是指获取id是在于插入后 -->
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="queryCount" resultType="long"  parameterType="com.fh.param.UserSearchParam">
+		select count(*) FROM  t_shop_user
+	</select>
+<select id="queryUserResource" resultType="com.fh.model.ResourceInfo" parameterType="int">
+         SELECT
+        t_resource.t_id as id,
+        t_resource.t_name as resourceName,
+        t_resource.t_url as url
+        FROM
+        t_resourceandrole ,
+        t_resource ,
+        t_role ,
+        t_shop_user ,
+        `shopuser-role`
+        WHERE
+        t_shop_user.id = `shopuser-role`.userid AND
+        t_role.t_id = `shopuser-role`.roleid AND
+        t_role.t_id = t_resourceandrole.roleId AND
+        t_resourceandrole.resourceId = t_resource.t_id AND
+        t_shop_user.id = #{id}
+</select>
+<select id="queryUserResourceByType" resultType="com.fh.model.ResourceInfo" parameterType="int">
+         SELECT
+        t_resource.t_id as id,
+        t_resource.t_name as resourceName,
+        t_resource.t_url as url,
+        t_resource.t_type as type,
+        t_resource.t_pid as pid
+        FROM
+        t_resourceandrole ,
+        t_resource ,
+        t_role ,
+        t_shop_user ,
+        `shopuser-role`
+        WHERE
+        t_shop_user.id = `shopuser-role`.userid AND
+        t_role.t_id = `shopuser-role`.roleid AND
+        t_role.t_id = t_resourceandrole.roleId AND
+        t_resourceandrole.resourceId = t_resource.t_id AND
+        t_shop_user.id = #{id}
+</select>
+    <select id="queryArea" resultType="com.fh.model.Area" parameterType="int">
+        select id,areaName as name,pid from a_area where pid=#{id}
+    </select>
+    <select id="queryAreaList" resultType="com.fh.model.Area" >
+        select id,areaName as name,pid from a_area
+    </select>
+    <insert id="addArea" parameterType="com.fh.model.Area" >
+        insert into a_area (areaName,pid) values (#{name},#{pid});
+    </insert>
+    <update id="updateArea" parameterType="com.fh.model.Area">
+        update a_area set areaName=#{name} where id=#{id}
+    </update>
+    <delete id="deleteAreas" parameterType="java.util.List">
+        delete FROM a_area where id in
+        <foreach collection="list" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+<!--删除当前用户的所有角色-->
+    <delete id="deleteUserRole" parameterType="int" >
+       DELETE FROM `shopuser-role` WHERE `shopuser-role`.userid=#{id}
+    </delete>
+<!--修改用户-->
+    <update id="updateUser" parameterType="com.fh.model.User">
+        update t_shop_user set userName=#{userName},area1=#{area1},area2=#{area2},area3 = #{area3},
+        realName = #{realName},age=#{age},sex=#{sex},phoneNum = #{phoneNum},salary=#{salary}
+        where id=#{id}
+    </update>
+    <!--为用户增加权限-->
+    <insert id="addUserRole" parameterType="java.util.Map">
+        insert into `shopuser-role` (userid,roleid) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{userId},
+            #{item}
+            )
+        </foreach>
+    </insert>
+</mapper>

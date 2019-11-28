@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  
+    "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+   
+<mapper namespace="com.fh.user.mapper.UserMapper">
+ <select id="queryUserByName" resultType="com.fh.user.model.User" parameterType="string">
+	 select * from t_member where userName =#{userName}
+ </select>
+ <select id="getUserByPhoneNum" resultType="com.fh.user.model.User" parameterType="string">
+	 select * from t_member where phoneNum =#{phoneNum}
+ </select>
+
+    <insert id="addUser" parameterType="com.fh.user.model.User">
+        insert into t_shop_user(userName,passWord,salt,realName,age,sex,phoneNum,joinTime) values (#{userName},#{passWord},#{salt},#{realName},#{age},#{sex},#{phoneNum},#{joinTime})
+        <!-- 指定结果类型resultType，keyProperty是属性，自动返回到属性id中，order是次序，after是指获取id是在于插入后 -->
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+</mapper>
