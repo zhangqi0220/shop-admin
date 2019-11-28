@@ -16,6 +16,7 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
         //用于判定是否需要处理该参数分解，返回true为需要，并会去调用下面的方法resolveArgument。
         boolean b = methodParameter.hasParameterAnnotation(MemberGain.class);
         if (b){
+            System.out.println("");
             return true;
         }
         return false;
